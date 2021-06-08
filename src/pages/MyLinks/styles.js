@@ -1,19 +1,27 @@
-import styled from 'styled-components/native'
-import {Platform} from 'react-native'
+import styled from "styled-components/native";
+import { Platform } from "react-native";
 
 export const Container = styled.View`
-flex: 1;
-background-color: #134742;
+  flex: 1;
+  background-color: #134742;
 `;
 
 export const Title = styled.Text`
-margin-top: ${Platform.OS === 'ios' ? 35+'%' : 20+'%'};
-margin-left: 20px;
-font-size: 32px;
-font-weight: bold;
-color: white;
+  margin-top: ${Platform.OS === "ios" ? 35 + "%" : 20 + "%"};
+  margin-left: 20px;
+  font-size: 32px;
+  font-weight: bold;
+  color: white;
 `;
 
-export const ListLinks = styled.FlatList`
+export const ListLinks = styled.FlatList``;
 
+export const ContainerEmpty = styled.View`
+  margin-top: 15%;
+  align-items: center;
+`;
+
+export const WarningText = styled.Text`
+  font-size: 17px;
+  color: white;
 `;

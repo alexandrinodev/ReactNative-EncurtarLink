@@ -29,6 +29,7 @@ import {
 } from "./styles";
 
 import api from "../../services/api";
+import {saveLink,getLinkSave} from '../../utils/storeLinks'
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
@@ -46,6 +47,11 @@ export default function Home() {
 
       setData(response.data)
       setModalVisible(true)
+
+      //deu tudo certo, salvar link na lista do storage
+      saveLink('sujeitolinks', response.data);
+
+
       Keyboard.dismiss()
       setLoading(false);
       setInput('');

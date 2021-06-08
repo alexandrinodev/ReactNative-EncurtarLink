@@ -1,12 +1,51 @@
-import React from "react";
-import { View, Text } from "react-native";
-import ListItem from "../../components/ListItem";
+import React, { useState, useEffect } from "react";
+import { Modal, ActivityIndicator } from "react-native";
 
-import Menu from "../../components/Menu";
+import { useIsFocused } from "@react-navigation/native";
+
 import StatusBarPage from "../../components/StatusBarPage";
-import { Container, Title, ListLinks} from "./styles";
+import Menu from "../../components/Menu";
+import ListItem from "../../components/ListItem";
+import ModalLink from "../../components/ModalLink";
+
+import { getLinkSave, deleteLink } from "../../utils/storeLinks";
+
+import {
+  Container,
+  Title,
+  ListLinks,
+  ContainerEmpty,
+  WarningText,
+} from "./styles";
 
 export default function MyLinks() {
+  const isFocused = useIsFocused();
+
+  const [links, setLinks] = useState([]);
+  const [data, setData] = useState({});
+  const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoadgin] = useState(true);
+
+  useEffect(() => {
+    async function getLinks() {
+      const result = await getLinkSave("sujeitolinks");
+      setLinks(result);
+      setLoadgin(false);
+    }
+
+    getLinks();
+  }, [isFocused]);
+
+  function handleItem(item) {
+    setData(item);
+    setModalVisible(true);
+  }
+
+  async function handlerDelete(id) {
+    const result = await deleteLink(links, id);
+    setLinks(result);
+  }
+
   return (
     <Container>
       <StatusBarPage barStyle="light-content" backgroundColor="#132742" />
@@ -15,13 +54,35 @@ export default function MyLinks() {
 
       <Title>Meus Links</Title>
 
+      {links.length === 0 && (
+        <ContainerEmpty>
+          <ActivityIndicator color="white" size={25} />
+        </ContainerEmpty>
+      )}
+
+      {!loading && links.length === 0 && (
+        <ContainerEmpty>
+          <WarningText>Voce nao tem nenhum link :) </WarningText>
+        </ContainerEmpty>
+      )}
+
       <ListLinks
-        data={[{ id: 1, link: "teste.com" }, { id: 1, link: "teste.com" }]}
+        data={links}
         keyExtractor={(item) => String(item.id)}
-        renderItem={({ item }) => <ListItem data={item}/>}
-        contentContainerStyle={{paddingBottom:20}}
+        renderItem={({ item }) => (
+          <ListItem
+            data={item}
+            selectedItem={handleItem}
+            deleteItem={handlerDelete}
+          />
+        )}
+        contentContainerStyle={{ paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
       />
+
+      <Modal visible={modalVisible} transparent animationType="slide">
+        <ModalLink onClose={() => setModalVisible(false)} data={data} />
+      </Modal>
     </Container>
   );
 }
